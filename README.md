@@ -134,11 +134,19 @@ optional arguments:
 
 # Versus games
 
+# Passing class name explicitly, and passing nested module with class name implicit
 > python connect4.py -v dummies/LazyBoi player_arena.player_vunetid_a
 
+# the dummes argument will implicitly use dummies.Player class
 > python connect4.py -v dummies/LazyBoi dummies
 
 ```
 
+
+---
+
+For questions, reach out to Avisek Naug ([Aviseknaug][3]), or me (hazrmard).
+
 [1]: https://en.wikipedia.org/wiki/Connect_Four
 [2]: /player.py
+[3]: https://github.com/Aviseknaug/
