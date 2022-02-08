@@ -22,14 +22,16 @@ V
 5,0---->5,6
 '''
 
-# empty board denoted by zeros
-# max player denoted by 1-> they insert a 1 at any place
-# min player denoted by -1 -> they insert a -1 at any place
-# if hoirzontal, vertical or diagonal of length 4 sum is 4; max player wins
-# if hoirzontal, vertical or diagonal of length 4 sum is -4; max player wins
-# every other possible value implies game not ended
-# game continues untill all 6*7=42 spots are filled
-# timed out action implies opponent wins according to Dr Biswas
+# board is a numpy array
+# empty spots are 0s
+# Internally:
+#   player 1 pieces are +1
+#   player 2 pieces are -1
+# each player sees their pieces as +1, and their opponent as -1
+# the player with 4 pieces in horizontal, vertical, or diagonal alignment wins
+# game continues until all 6*7=42 spots are filled
+# game is a draw if all spots filled and no player has managed to align 4 pieces
+# timed out action implies opponent wins
 
 ROWS = 6
 COLUMNS = 7
@@ -178,7 +180,11 @@ class Connect4Board():
                     p1_invalid += 1
                     if p1_invalid >= self.max_invalid_moves:
                         winner, reason = p2, 'Invalid moves exceeded %d' % self.max_invalid_moves
-                elif self.connected4(self._board):
+                else:
+                    # Player 1's pieces are represented as +1
+                    self.update_board(move, p1piece)
+                    moves.append(move)
+                if self.connected4(self._board):
                     winner, reason = p1, 'Connected 4'
                 elif self.game_draw():
                     winner, reason = None, 'Game drawn'
@@ -186,9 +192,6 @@ class Connect4Board():
                 winner, reason = p2, 'Move timeout'
             finally:
                 if reason: break
-            # Player 1's pieces are represented as +1
-            self.update_board(move, p1piece)
-            moves.append(move)
 
             p2_board = self._board * -1 # each player sees their pieces as +1
             p2_board_queue.put(p2_board)
@@ -198,7 +201,11 @@ class Connect4Board():
                     p2_invalid += 1
                     if p2_invalid >= self.max_invalid_moves:
                         winner, reason = p1, 'Invalid moves exceeded %d' % self.max_invalid_moves
-                elif self.connected4(self._board * -1):
+                else:
+                    # Player 2's pieces are represented as -1
+                    self.update_board(move, p2piece)
+                    moves.append(move)
+                if self.connected4(self._board * -1):
                     winner, reason = p2, 'Connected 4'
                 elif self.game_draw():
                     winner, reason = None, 'Game drawn'
@@ -206,9 +213,6 @@ class Connect4Board():
                 winner, reason = p1, 'Move timeout'
             finally:
                 if reason: break
-            # Player 2's pieces are represented as -1
-            self.update_board(move, p2piece)
-            moves.append(move)
         
         p1_board_queue.put(None)
         p2_board_queue.put(None)
