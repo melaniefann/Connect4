@@ -12,7 +12,7 @@ class LazyBoi(P):
 
     def setup(self):
         time.sleep(1.)
-        print(' ' + self.__class__.__name__ + ': ...Hmm?')
+        print(self.__class__.__name__ + ': ...Hmm?')
 
 
     def play(self, board: np.ndarray) -> int:
@@ -24,7 +24,7 @@ class LazyBoi(P):
 class OffBase(P):
 
     def setup(self):
-        print(' ' + self.__class__.__name__ + ': Umm...this is the swing dance class, right?')
+        print(self.__class__.__name__ + ': Umm...this is the swing dance class, right?')
 
 
     def play(self, board: np.ndarray) -> int:
@@ -38,7 +38,7 @@ class SeeWhatSticks:
 
 
     def setup(self):
-        print(' ' + self.__class__.__name__ + ': Bruh I "See What Sticks", I don\'t need to prepare -_-')
+        print(self.__class__.__name__ + ': Bruh I "See What Sticks", I don\'t need to prepare -_-')
 
 
     def play(self, board: np.ndarray) -> int:
@@ -52,7 +52,7 @@ class Player(P):
 
 
     def setup(self):
-        print(' ' + self.__class__.__name__ + ': The default imported class name. Pretty boring.')
+        print(self.__class__.__name__ + ': The default imported class name. Pretty boring.')
 
 
     def play(self, board: np.ndarray) -> int:

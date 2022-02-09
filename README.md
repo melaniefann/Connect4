@@ -17,7 +17,7 @@ This repository contains code for the [Connect 4][1] game. It provides the inter
 
 ## Installing
 
-The code requires `python=3.9 numpy tqdm`. You can `pip install` or `conda install` these packages. It is recommended to use a virtual environment.
+The code requires `python=3.9 numpy`. You can `pip install` or `conda install` these packages. It is recommended to use a virtual environment.
 
 ## Interface
 

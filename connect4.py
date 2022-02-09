@@ -9,7 +9,6 @@ from itertools import combinations
 from typing import Dict, Iterable, Tuple
 
 import numpy as np
-from tqdm.auto import tqdm, trange
 
 from checks import check_seq
 from player import Player
@@ -38,7 +37,7 @@ COLUMNS = 7
 NUM_CONNECT = 4
 TIMEOUT_MOVE = 0.5
 TIMEOUT_SETUP = 2.
-MAX_INVALID_MOVES = 1
+MAX_INVALID_MOVES = 3
 
 
 def runner(player_path: str, move_queue: mp.Queue, board_queue: mp.Queue):
@@ -228,7 +227,7 @@ class Connect4Board():
             player1: 0, player2: 0, None: 0
         }
 
-        for i in trange(num, leave=False, desc='%s vs %s' % (player1, player2)):
+        for i in range(num):
             winner, reason, moves = self.play(player1, player2)
             record[winner] += 1
         return record
@@ -239,12 +238,13 @@ class Connect4Board():
 
 
 def championship(
-        arena: Iterable[str], game_options: Dict=None, num: int=1
+        arena: Iterable[str], game_options: Dict=None, num: int=1, verbose: bool=True,
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, Dict[str, int]]:
     # If arena is a list with a single string, it is assumed to be the path to a directory.
     # The directory should contain python modules or packages. From each of them,
     # a class Player should be able to be imported with the step() and play()
     # methods.
+    idx_insertion = None
     if len(arena)==1:
         idx_insertion = len(sys.path)
         abs_path = os.path.abspath(arena[0])
@@ -273,15 +273,20 @@ def championship(
     # the default Player class. If it already was a list of strings, those can
     # contain non-default class names like module.submodule/classname.
     # Now generating pairings of players for a game:
-    for player1, player2 in tqdm(list(combinations(arena, 2)), leave=False, desc='Games'):
+    max_len = max(map(len, arena))
+    for player1, player2 in (combinations(arena, 2)):
         game = Connect4Board(**game_options)
         record = game.play_multiple(player1, player2, num)
         victories[idx_ref[player1], idx_ref[player2]] += record[player1]
         victories[idx_ref[player2], idx_ref[player1]] += record[player2]
         draws[idx_ref[player1], idx_ref[player2]] += record[None]
         draws[idx_ref[player2], idx_ref[player1]] += record[None]
+        if verbose:
+            print(f'{player1:>{max_len}} vs {player2:<{max_len}}')
+            print(f'{record[player1]:>{max_len}} -- {record[player2]:<{max_len}}')
     losses = victories.T
-    del sys.path[idx_insertion] # leave sys.path unchanged after function returns
+    if idx_insertion is not None:
+        del sys.path[idx_insertion] # leave sys.path unchanged after function returns
     return victories, losses, draws, idx_ref
 
 
