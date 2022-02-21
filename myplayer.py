@@ -1,15 +1,14 @@
+from player import Player
 import numpy as np
 
 
-class Player:
-
+class MyPlayer(Player):
     def setup(self):
         """
         This method will be called once at the beginning of the game so the player
         can conduct any setup before the move timer begins. The setup method is
         also timed.
         """
-
 
         pass
 
@@ -39,6 +38,3 @@ class Player:
             to the lowest empty row in the column (like a pile).
         """
         raise NotImplementedError()
-
-
-__all__ = ['Player']

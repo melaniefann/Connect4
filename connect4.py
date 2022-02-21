@@ -12,6 +12,7 @@ import numpy as np
 
 from checks import check_seq
 from player import Player
+
 # arrangement of board
 '''
 0,0 --->0,6
@@ -46,12 +47,12 @@ def runner(player_path: str, move_queue: mp.Queue, board_queue: mp.Queue):
         components = player_path.split('/')
         module_name = components[0]
         player_module = importlib.import_module(module_name)
-        if len(components)==2:
+        if len(components) == 2:
             class_name = components[1]
     except Exception as exc:
         print('Could not load player %s due to: %s' % (player_path, exc))
         return -1
-    
+
     player_cls = getattr(player_module, class_name)
     player: Player = player_cls()
     player.setup()
@@ -64,13 +65,12 @@ def runner(player_path: str, move_queue: mp.Queue, board_queue: mp.Queue):
         move_queue.put(move)
 
 
-
 class Connect4Board():
 
     def __init__(
-        self, rows=ROWS, columns=COLUMNS, timeout_move=TIMEOUT_MOVE,
-        timeout_setup=TIMEOUT_SETUP, num_connect=NUM_CONNECT,
-        max_invalid_moves=MAX_INVALID_MOVES
+            self, rows=ROWS, columns=COLUMNS, timeout_move=TIMEOUT_MOVE,
+            timeout_setup=TIMEOUT_SETUP, num_connect=NUM_CONNECT,
+            max_invalid_moves=MAX_INVALID_MOVES
     ):
         """
         rows : int -- number of rows in the game
@@ -87,32 +87,27 @@ class Connect4Board():
         self.max_invalid_moves = max_invalid_moves
 
         self.kernels = (
-            np.ones((1,num_connect)),
+            np.ones((1, num_connect)),
             np.ones((num_connect, 1)),
             np.eye(num_connect),
             np.fliplr(np.eye(num_connect))
         )
         self.reset_board()
 
-
     def __str__(self) -> str:
         board = self._board.copy().astype(int)
         return np.array2string(board)
 
-
     def reset_board(self):
-        self._board = np.zeros((self.rows,self.columns))
-
+        self._board = np.zeros((self.rows, self.columns))
 
     def move_is_valid(self, action):
         if (action < 0) | (action >= self.columns):
             return False
         return self._board[0, action] == 0
 
-
     def game_draw(self):
         return 0 not in self._board
-
 
     def connected4(self, board: np.ndarray):
         # Check if +1s in the board are connected. So will need to convert
@@ -122,22 +117,20 @@ class Connect4Board():
                 return True
         return False
 
-
     def update_board(self, col_chosen, value):
         for i in reversed(range(self.rows)):
             # find first empty row
-            if self._board[i, col_chosen]==0:
+            if self._board[i, col_chosen] == 0:
                 # place value
                 self._board[i, col_chosen] = value
                 break
-
 
     def play(self, player1: str, player2: str):
 
         # Randomly swap p1, p2 for first move.
         toss = random.randint(0, 1)
-        p1, p1piece = (player1, +1) if toss==1 else (player2, -1)
-        p2, p2piece = (player2, -1) if toss==1 else (player1, +1)
+        p1, p1piece = (player1, +1) if toss == 1 else (player2, -1)
+        p2, p2piece = (player2, -1) if toss == 1 else (player1, +1)
 
         p1_move_queue = mp.Queue(maxsize=1)
         p2_move_queue = mp.Queue(maxsize=1)
@@ -165,10 +158,10 @@ class Connect4Board():
             else:
                 winner, reason = None, 'Both players\' setup failed'
                 status2 = ''
-        
+
         if reason:
             return winner, reason, moves
-        
+
         p1_invalid, p2_invalid = 0, 0
         while True:
 
@@ -192,7 +185,7 @@ class Connect4Board():
             finally:
                 if reason: break
 
-            p2_board = self._board * -1 # each player sees their pieces as +1
+            p2_board = self._board * -1  # each player sees their pieces as +1
             p2_board_queue.put(p2_board)
             try:
                 move = p2_move_queue.get(timeout=self.timeout_move)
@@ -212,16 +205,15 @@ class Connect4Board():
                 winner, reason = p1, 'Move timeout'
             finally:
                 if reason: break
-        
+
         p1_board_queue.put(None)
         p2_board_queue.put(None)
         p1_process.join()
         p2_process.join()
         return winner, reason, moves
 
-
     def play_multiple(
-        self, player1: str, player2: str, num: int=1
+            self, player1: str, player2: str, num: int = 1
     ) -> Dict[str, int]:
         record = {
             player1: 0, player2: 0, None: 0
@@ -233,19 +225,19 @@ class Connect4Board():
         return record
 
     @property
-    def board(self,):
+    def board(self, ):
         return self._board
 
 
 def championship(
-        arena: Iterable[str], game_options: Dict=None, num: int=1, verbose: bool=True,
-    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, Dict[str, int]]:
+        arena: Iterable[str], game_options: Dict = None, num: int = 1, verbose: bool = True,
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, Dict[str, int]]:
     # If arena is a list with a single string, it is assumed to be the path to a directory.
     # The directory should contain python modules or packages. From each of them,
     # a class Player should be able to be imported with the step() and play()
     # methods.
     idx_insertion = None
-    if len(arena)==1:
+    if len(arena) == 1:
         idx_insertion = len(sys.path)
         abs_path = os.path.abspath(arena[0])
         sys.path.append(abs_path)
@@ -255,8 +247,8 @@ def championship(
             p[:-3] if p.endswith('.py') else p \
             for p in arena if (
                 # Only look at files if they don't start with _, . (like __init)
-                not (p.startswith('.') or p.startswith('_')) and \
-                (p.endswith('.py') or os.path.isdir(os.path.join(abs_path, p)))
+                    not (p.startswith('.') or p.startswith('_')) and \
+                    (p.endswith('.py') or os.path.isdir(os.path.join(abs_path, p)))
             )
         ]
     # Victories is a 2D array, with a row for each player, and each column
@@ -268,7 +260,7 @@ def championship(
     victories = np.zeros((len(arena), len(arena)), dtype=int)
     losses = np.zeros((len(arena), len(arena)), dtype=int)
     draws = np.zeros((len(arena), len(arena)), dtype=int)
-    idx_ref = {player_name:i for i, player_name in enumerate(arena)}
+    idx_ref = {player_name: i for i, player_name in enumerate(arena)}
     # If arena was a string, it is now expanded into a list of player names with
     # the default Player class. If it already was a list of strings, those can
     # contain non-default class names like module.submodule/classname.
@@ -286,11 +278,10 @@ def championship(
             print(f'{record[player1]:>{max_len}} -- {record[player2]:<{max_len}}')
     losses = victories.T
     if idx_insertion is not None:
-        del sys.path[idx_insertion] # leave sys.path unchanged after function returns
+        del sys.path[idx_insertion]  # leave sys.path unchanged after function returns
     return victories, losses, draws, idx_ref
 
 
-    
 if __name__ == '__main__':
     parser = ArgumentParser(
         prog='Connect 4 Game',
