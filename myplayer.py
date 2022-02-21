@@ -37,4 +37,55 @@ class MyPlayer(Player):
             The column index in which to place your piece. The piece will drop
             to the lowest empty row in the column (like a pile).
         """
+
+
         raise NotImplementedError()
+
+    def getValidMoves(self, board) -> []:
+        validMoves = []
+        for i in range(0,6):
+            if board[0][i] == 0:
+                np.append(validMoves, i)
+        return validMoves
+
+    def isTerminalNode(self, board) -> bool:
+        pass
+
+    def heuristic(self, board) -> int:
+        pass
+
+    def alphabeta(self, board, depth, alpha, beta, maximizingPlayer) -> (int, int):
+        validMoves = getValidMoves()
+        isTerminal = isTerminalNode(board)
+        columnToPlay = None
+        if depth == 0 or isTerminal:
+            return columnToPlay, heuristic(board)
+        if maximizingPlayer:
+            bestHeuristic = -10000000
+            for column in validMoves:
+                #make a new board
+                #add the move to the board
+                #curHeuristic = alphabeta(self, newBoard, alpha, beta, FALSE))
+                if curHeuristic > bestHeuristic:
+                    bestHeuristic = curHeuristic
+                    columnToPlay = column
+
+                if value >= beta:
+                    break
+                alpha = max(alpha, value)
+                return columnToPlay, value
+        else:
+            bestHeuristic = 10000000
+            for column in validMoves:
+                #make a new board
+                #add the move to the board
+                # curHeuristic = alphabeta(self, newBoard, alpha, beta, TRUE))
+                if curHeuristic < bestHeuristic:
+                    bestHeuristic = curHeuristic
+                    columnToPlay = column
+                if value <= alpha:
+                    break
+                beta = min(beta, value)
+                return columnToPlay, value
+
+
