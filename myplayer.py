@@ -38,12 +38,11 @@ class MyPlayer(Player):
             to the lowest empty row in the column (like a pile).
         """
 
-
         raise NotImplementedError()
 
     def getValidMoves(self, board) -> []:
         validMoves = []
-        for i in range(0,6):
+        for i in range(0, board.shape[0]):
             if board[0][i] == 0:
                 np.append(validMoves, i)
         return validMoves
@@ -54,6 +53,16 @@ class MyPlayer(Player):
     def heuristic(self, board) -> int:
         pass
 
+    def makeNewBoard(self, board, col, value) -> np.ndarray:
+        newBoard = board.copy()
+        for i in range(board.shape[0], 0, -1):
+            if newBoard[i][col] == 0:
+                newBoard[i][col] = value
+                break
+        return newBoard
+
+
+
     def alphabeta(self, board, depth, alpha, beta, maximizingPlayer) -> (int, int):
         validMoves = getValidMoves()
         isTerminal = isTerminalNode(board)
@@ -63,9 +72,8 @@ class MyPlayer(Player):
         if maximizingPlayer:
             bestHeuristic = -10000000
             for column in validMoves:
-                #make a new board
-                #add the move to the board
-                #curHeuristic = alphabeta(self, newBoard, alpha, beta, FALSE))
+                newBoard = makeNewBoard(self, board, column, +1)
+                curHeuristic = alphabeta(self, newBoard, alpha, beta, False)
                 if curHeuristic > bestHeuristic:
                     bestHeuristic = curHeuristic
                     columnToPlay = column
@@ -77,9 +85,8 @@ class MyPlayer(Player):
         else:
             bestHeuristic = 10000000
             for column in validMoves:
-                #make a new board
-                #add the move to the board
-                # curHeuristic = alphabeta(self, newBoard, alpha, beta, TRUE))
+                newBoard = makeNewBoard(self, board, column, -1)
+                curHeuristic = alphabeta(self, newBoard, alpha, beta, True)
                 if curHeuristic < bestHeuristic:
                     bestHeuristic = curHeuristic
                     columnToPlay = column
@@ -87,5 +94,3 @@ class MyPlayer(Player):
                     break
                 beta = min(beta, value)
                 return columnToPlay, value
-
-
