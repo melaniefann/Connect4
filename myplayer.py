@@ -125,27 +125,69 @@ class MyPlayer(Player):
 
     # check the most recent piece that was added to the board to see if it wins
 
-    def heuristic(self, board, maximizing) -> int:
-        value_to_add = 0
-        value_to_subtract = 0
-        value_to_count = None
+    def evaluation_function(self, board, maximizing) -> int:
+        my_win = 0
+        opp_win = 0
+        my_move = +1
+        opp_move = -1
 
-        if maximizing:
-            value_to_count = +1
-        else:
-            value_to_count = -1
-
-
-        # needs to check all of them *****
         # horizontal
+        for row in range(0, 5):  # for each row
+            for startCol in range(0, 3):
+                if ((board[row, startCol] == opp_move or 0)
+                        and (board[row, startCol + 1] == opp_move or 0)
+                        and (board[row, startCol + 2] == opp_move or 0)
+                        and (board[row, startCol + 3] == opp_move or 0)):
+                    opp_win += 1
+                elif ((board[row, startCol] == my_move or 0)
+                      and (board[row, startCol + 1] == my_move or 0)
+                      and (board[row, startCol + 2] == my_move or 0)
+                      and (board[row, startCol + 3] == my_move or 0)):
+                    my_win += 1
 
         # vertical
+        for col in range(0, 6):
+            for startRow in range(0, 2):
+                if ((board[startRow, col] == opp_move or 0)
+                        and (board[startRow + 1, col] == opp_move or 0)
+                        and (board[startRow + 2, col] == opp_move or 0)
+                        and (board[startRow + 3, col] == opp_move or 0)):
+                    opp_win += 1
+                elif ((board[startRow, col] == my_move or 0)
+                      and (board[startRow + 1, col] == my_move or 0)
+                      and (board[startRow + 2, col] == my_move or 0)
+                      and (board[startRow + 3, col] == my_move or 0)):
+                    my_win += 1
 
-        # diagonals only need to check from row 5 to 3 as start points
-        # right diagonals
+        # down diagonals
+        for row in range(0,2):
+            for col in range(0,3):
+                if ((board[row][col] == opp_move or 0)
+                        and (board[row+1][col+1] == opp_move or 0)
+                        and (board[row+2][col+2] == opp_move or 0)
+                        and (board[row+3][col+3] == opp_move or 0)):
+                    opp_win += 1
+                elif ((board[row][col] == my_move or 0)
+                        and (board[row+1][col+1] == my_move or 0)
+                        and (board[row+2][col+2] == my_move or 0)
+                        and (board[row+3][col+3] == my_move or 0)):
+                    my_win += 1
 
-        # left diagonals
-        pass
+        # up diagonals
+        for row in range(3,5):
+            for col in range(0, 2):
+                if ((board[row][col] == opp_move or 0)
+                        and (board[row - 1][col + 1] == opp_move or 0)
+                        and (board[row - 2][col + 2] == opp_move or 0)
+                        and (board[row - 3][col + 3] == opp_move or 0)):
+                    opp_win += 1
+                elif ((board[row][col] == my_move or 0)
+                      and (board[row - 1][col + 1] == my_move or 0)
+                      and (board[row - 2][col + 2] == my_move or 0)
+                      and (board[row - 3][col + 3] == my_move or 0)):
+                    my_win += 1
+        return my_win - opp_win
+
 
     def alpha_beta(self, board, depth, alpha, beta, maximizing, lastColumn) -> (int, int):
         won = is_winning_board(board, lastColumn, maximizing)
@@ -160,7 +202,7 @@ class MyPlayer(Player):
         validMoves = get_valid_moves(board)
 
         if depth == 0 or len(validMoves) == 0:
-            return columnToPlay, heuristic(self, board, maximizing)
+            return columnToPlay, evaluation_function(self, board, maximizing)
 
         if maximizing:
             bestHeuristic = -math.inf
