@@ -175,6 +175,7 @@ class Connect4Board():
                 else:
                     # Player 1's pieces are represented as +1
                     self.update_board(move, p1piece)
+                    print(self.__str__())
                     moves.append(move)
                 if self.connected4(self._board):
                     winner, reason = p1, 'Connected 4'
@@ -196,6 +197,7 @@ class Connect4Board():
                 else:
                     # Player 2's pieces are represented as -1
                     self.update_board(move, p2piece)
+                    print(self.__str__())
                     moves.append(move)
                 if self.connected4(self._board * -1):
                     winner, reason = p2, 'Connected 4'

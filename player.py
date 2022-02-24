@@ -10,7 +10,6 @@ class Player:
         also timed.
         """
 
-
         pass
 
     def play(self, board: np.ndarray) -> int:
@@ -38,7 +37,7 @@ class Player:
             The column index in which to place your piece. The piece will drop
             to the lowest empty row in the column (like a pile).
         """
-        raise NotImplementedError()
+        return np.random.randint(0, 6)
 
 
 __all__ = ['Player']
