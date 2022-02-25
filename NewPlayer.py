@@ -6,10 +6,11 @@ ROWS = 6
 COLS = 7
 DEPTH = 3
 
-"""
-makes a copy of the board to be used in the alpha-beta search
-"""
+
 def make_new_board(board, col, value) -> np.ndarray:
+    """
+    function: makes a copy of the board to be used in the alpha-beta search with the inserted value at column col
+    """
     newBoard = board.copy()
     for i in range(5, -1, -1):
         if newBoard[i][col] == 0:
@@ -18,21 +19,21 @@ def make_new_board(board, col, value) -> np.ndarray:
     return newBoard
 
 
-'''
-returns an array of valid moves
-'''
 def get_valid_moves(board):
+    """
+    returns an array of valid moves (columns)
+    """
     validMoves = []
     for i in range(0, COLS):
         if board[0][i] == 0:
             validMoves.append(i)
     return validMoves
 
-'''
-is_winning_board
-- returns the player's value that is winning or 0 if no one has won
-'''
 def is_winning_board(board) -> int:
+    """
+    returns the player's value that won or 0 if no one has one
+    """
+
     # horizontal
     for row in range(0, 6):  # for each row
         for startCol in range(0, 4):
@@ -74,11 +75,11 @@ def is_winning_board(board) -> int:
                     return firstPiece
     return 0
 
-'''
-Create the evaluation function
- this function counts the number of possible ways the player can win - the number of possible ways the opponent can win
-'''
 def evaluation(board) -> int:
+    """
+    creates the evaluation function
+    - counts the number of possible ways the player can win - the number of possible ways the opponent can win
+    """
     my_win = 0
     opp_win = 0
 
@@ -144,6 +145,9 @@ def evaluation(board) -> int:
 
 
 def alpha_beta(board, depth, alpha, beta, maximizing) -> (int, int):
+    """
+    performs alpha-beta search
+    """
     won = is_winning_board(board)
     valid_moves = get_valid_moves(board)
     column_to_play = None
@@ -224,7 +228,4 @@ class NewPlayer(Player):
             The column index in which to place your piece. The piece will drop
             to the lowest empty row in the column (like a pile).
         """
-        choice, evaluation = alpha_beta(board, DEPTH, -1000, 1000, True)
-        print("choice", choice)
-        print("evaluation", evaluation)
-        return choice
+        return alpha_beta(board, DEPTH, -1000, 1000, True)[0]
