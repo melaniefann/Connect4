@@ -1,5 +1,14 @@
 import numpy as np
+import random
 
+ROWS = 6
+COLS = 7
+def get_valid_moves(board):
+    validMoves = []
+    for i in range(0, COLS):
+        if board[0][i] == 0:
+            validMoves.append(i)
+    return validMoves
 
 class Player:
 
@@ -37,7 +46,7 @@ class Player:
             The column index in which to place your piece. The piece will drop
             to the lowest empty row in the column (like a pile).
         """
-        return np.random.randint(0, 6)
+        return random.choice(get_valid_moves(board))
 
 
 __all__ = ['Player']

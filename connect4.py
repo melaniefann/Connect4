@@ -113,7 +113,7 @@ class Connect4Board():
         # Check if +1s in the board are connected. So will need to convert
         # player2's -1s first before passing.
         for kernel in self.kernels:
-            if check_seq(self.board, kernel):
+            if check_seq(board, kernel):
                 return True
         return False
 
@@ -165,7 +165,8 @@ class Connect4Board():
         p1_invalid, p2_invalid = 0, 0
         while True:
 
-            p1_board_queue.put(self._board)
+            p1_board = self._board * p1piece
+            p1_board_queue.put(p1_board)
             try:
                 move = p1_move_queue.get(timeout=self.timeout_move)
                 if not self.move_is_valid(move):
@@ -177,7 +178,7 @@ class Connect4Board():
                     self.update_board(move, p1piece)
                     print(self.__str__())
                     moves.append(move)
-                if self.connected4(self._board):
+                if self.connected4(self._board * p1piece):
                     winner, reason = p1, 'Connected 4'
                 elif self.game_draw():
                     winner, reason = None, 'Game drawn'
@@ -199,7 +200,7 @@ class Connect4Board():
                     self.update_board(move, p2piece)
                     print(self.__str__())
                     moves.append(move)
-                if self.connected4(self._board * -1):
+                if self.connected4(self._board * p2piece):
                     winner, reason = p2, 'Connected 4'
                 elif self.game_draw():
                     winner, reason = None, 'Game drawn'
