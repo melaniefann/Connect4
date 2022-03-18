@@ -1,6 +1,5 @@
 import numpy as np
 import random
-from player import Player
 
 ROWS = 6
 COLS = 7
@@ -9,7 +8,7 @@ DEPTH = 3
 
 def make_new_board(board, col, value) -> np.ndarray:
     """
-    function: makes a copy of the board to be used in the alpha-beta search with the inserted value at column col
+    makes a copy of the board to be used in the alpha-beta search with the inserted value at column col
     """
     newBoard = board.copy()
     for i in range(5, -1, -1):
@@ -192,7 +191,7 @@ def alpha_beta(board, depth, alpha, beta, maximizing) -> (int, int):
         return [column_to_play, bestHeuristic]
 
 
-class NewPlayer(Player):
+class Player:
 
     def setup(self):
         """
