@@ -76,101 +76,121 @@ def is_winning_board(board) -> int:
     return 0
 
 
-def canBlockWinMove(board) -> int:
+def canBlockOrWinMove(board, move) -> int:
     """
     determines if we can block a winning move; if so, returns column to play to block move
     """
+
     for row in range(0, 6):  # for each row
         for startCol in range(0, 4):
             if row != 0:
-                if ((board[row, startCol] == opp_move)
-                        and (board[row, startCol + 1] == opp_move)
-                        and (board[row, startCol + 2] == opp_move)
+                if ((board[row, startCol] == move)
+                        and (board[row, startCol + 1] == move)
+                        and (board[row, startCol + 2] == move)
                         and (board[row, startCol + 3] == 0)
                         and (board[row - 1, startCol + 3] != 0)):
                     return startCol + 3
                 elif ((board[row, startCol] == 0)
-                      and (board[row, startCol + 1] == opp_move)
-                      and (board[row, startCol + 2] == opp_move)
-                      and (board[row, startCol + 3] == opp_move)
+                      and (board[row, startCol + 1] == move)
+                      and (board[row, startCol + 2] == move)
+                      and (board[row, startCol + 3] == move)
                       and (board[row - 1, startCol] != 0)):
                     return startCol
-                elif ((board[row, startCol] == opp_move)
+                elif ((board[row, startCol] == move)
                       and (board[row, startCol + 1] == 0)
-                      and (board[row, startCol + 2] == opp_move)
-                      and (board[row, startCol + 3] == opp_move)
+                      and (board[row, startCol + 2] == move)
+                      and (board[row, startCol + 3] == move)
                       and (board[row - 1, startCol + 1] != 0)):
                     return startCol + 1
-                elif ((board[row, startCol] == opp_move)
-                      and (board[row, startCol + 1] == opp_move)
+                elif ((board[row, startCol] == move)
+                      and (board[row, startCol + 1] == move)
                       and (board[row, startCol + 2] == 0)
-                      and (board[row, startCol + 3] == opp_move)
+                      and (board[row, startCol + 3] == move)
                       and (board[row - 1, startCol + 2] != 0)):
                     return startCol + 2
             else:
-                if ((board[row, startCol] == opp_move)
-                        and (board[row, startCol + 1] == opp_move)
-                        and (board[row, startCol + 2] == opp_move)
+                if ((board[row, startCol] == move)
+                        and (board[row, startCol + 1] == move)
+                        and (board[row, startCol + 2] == move)
                         and (board[row, startCol + 3] == 0)):
                     return startCol + 3
                 elif ((board[row, startCol] == 0)
-                      and (board[row, startCol + 1] == opp_move)
-                      and (board[row, startCol + 2] == opp_move)
-                      and (board[row, startCol + 3] == opp_move)):
+                      and (board[row, startCol + 1] == move)
+                      and (board[row, startCol + 2] == move)
+                      and (board[row, startCol + 3] == move)):
                     return startCol
-                elif ((board[row, startCol] == opp_move)
+                elif ((board[row, startCol] == move)
                       and (board[row, startCol + 1] == 0)
-                      and (board[row, startCol + 2] == opp_move)
-                      and (board[row, startCol + 3] == opp_move)):
+                      and (board[row, startCol + 2] == move)
+                      and (board[row, startCol + 3] == move)):
                     return startCol + 1
-                elif ((board[row, startCol] == opp_move)
-                      and (board[row, startCol + 1] == opp_move)
+                elif ((board[row, startCol] == move)
+                      and (board[row, startCol + 1] == move)
                       and (board[row, startCol + 2] == 0)
-                      and (board[row, startCol + 3] == opp_move)):
+                      and (board[row, startCol + 3] == move)):
                     return startCol + 2
 
     for col in range(0, 7):  # check columns
         for startRow in range(0, 3):
-            if ((board[startRow, col] == opp_move)
-                    and (board[startRow + 1, col] == opp_move)
-                    and (board[startRow + 2, col] == opp_move)
+            if ((board[startRow, col] == move)
+                    and (board[startRow + 1, col] == move)
+                    and (board[startRow + 2, col] == move)
                     and (board[startRow + 3, col] == 0)):
                 return col
 
     for row in range(0, 3):  # down diagonals
         for col in range(0, 4):
-            if ((board[row][col] == opp_move)
-                    and (board[row + 1][col + 1] == opp_move)
-                    and (board[row + 2][col + 2] == opp_move)
+            if ((board[row][col] == move)
+                    and (board[row + 1][col + 1] == move)
+                    and (board[row + 2][col + 2] == move)
                     and (board[row + 3][col + 3] == 0)
                     and (board[row + 2][col + 3] != 0)):
                 return col + 3
-            elif ((board[row][col] == opp_move)
-                  and (board[row + 1][col + 1] == opp_move)
+            elif ((board[row][col] == move)
+                  and (board[row + 1][col + 1] == move)
                   and (board[row + 2][col + 2] == 0)
-                  and (board[row + 3][col + 3] == opp_move)
+                  and (board[row + 3][col + 3] == move)
                   and (board[row + 1][col + 2] != 0)):
                 return col + 2
-            elif ((board[row][col] == opp_move)
+            elif ((board[row][col] == move)
                   and (board[row + 1][col + 1] == 0)
-                  and (board[row + 2][col + 2] == opp_move)
-                  and (board[row + 3][col + 3] == opp_move)
+                  and (board[row + 2][col + 2] == move)
+                  and (board[row + 3][col + 3] == move)
                   and (board[row][col + 1] != 0)):
                 return col + 1
             elif ((board[row][col] == 0)
-                  and (board[row + 1][col + 1] == opp_move)
-                  and (board[row + 2][col + 2] == opp_move)
-                  and (board[row + 3][col + 3] == opp_move)) \
-                    and (row == 0 or board[row - 1][col] != 0):
+                  and (board[row + 1][col + 1] == move)
+                  and (board[row + 2][col + 2] == move)
+                  and (board[row + 3][col + 3] == move)
+                  and (row == 0 or board[row - 1][col] != 0)):
                 return col
 
     for row in range(3, 6):  # up diagonals
         for col in range(0, 3):
-            if ((board[row][col] == opp_move or board[row][col] == 0)
-                    and (board[row - 1][col + 1] == opp_move or board[row - 1][col + 1] == 0)
-                    and (board[row - 2][col + 2] == opp_move or board[row - 2][col + 2] == 0)
-                    and (board[row - 3][col + 3] == opp_move or board[row - 3][col + 3] == 0)):
-                opp_win += 1
+            if ((board[row][col] == move)
+                    and (board[row - 1][col + 1] == move)
+                    and (board[row - 2][col + 2] == move)
+                    and (board[row - 3][col + 3] == 0)
+                    and (row == 0 or board[row - 4][col + 3] != 0)):
+                return col + 3
+            elif ((board[row][col] == move)
+                  and (board[row - 1][col + 1] == move)
+                  and (board[row - 2][col + 2] == 0)
+                  and (board[row - 3][col + 3] == move)
+                  and (board[row - 3][col + 2] != 0)):
+                return col + 2
+            elif ((board[row][col] == move)
+                  and (board[row - 1][col + 1] == 0)
+                  and (board[row - 2][col + 2] == move)
+                  and (board[row - 3][col + 3] == move)
+                  and (board[row - 2][col + 1] != 0)):
+                return col + 1
+            elif ((board[row][col] == 0)
+                  and (board[row - 1][col + 1] == move)
+                  and (board[row - 2][col + 2] == move)
+                  and (board[row - 3][col + 3] == move)
+                  and (board[row - 1][col] != 0)):
+                return col
     return -1
 
 
@@ -329,8 +349,13 @@ class Player:
         """
         if board[ROWS - 1][3] == 0:  # always play middle for first move
             return 3
-        canBlockOppMove = canBlockWinMove(board)
-        if canBlockOppMove >= 0:
-            return canBlockOppMove
+
+        strategyMove = canBlockOrWinMove(board, +1)
+        if strategyMove >= 0:
+            return strategyMove
+
+        strategyMove = canBlockOrWinMove(board, -1)
+        if strategyMove >= 0:
+            return strategyMove
 
         return alpha_beta(board, DEPTH, -1000, 1000, True)[0]
