@@ -28,6 +28,7 @@ def get_valid_moves(board):
             validMoves.append(i)
     return validMoves
 
+
 def is_winning_board(board) -> int:
     """
     returns the player's value that won or 0 if no one has one
@@ -73,6 +74,105 @@ def is_winning_board(board) -> int:
                         and (board[row - 3][col + 3] == firstPiece)):
                     return firstPiece
     return 0
+
+
+def canBlockWinMove(board) -> int:
+    """
+    determines if we can block a winning move; if so, returns column to play to block move
+    """
+    for row in range(0, 6):  # for each row
+        for startCol in range(0, 4):
+            if row != 0:
+                if ((board[row, startCol] == opp_move)
+                        and (board[row, startCol + 1] == opp_move)
+                        and (board[row, startCol + 2] == opp_move)
+                        and (board[row, startCol + 3] == 0)
+                        and (board[row - 1, startCol + 3] != 0)):
+                    return startCol + 3
+                elif ((board[row, startCol] == 0)
+                      and (board[row, startCol + 1] == opp_move)
+                      and (board[row, startCol + 2] == opp_move)
+                      and (board[row, startCol + 3] == opp_move)
+                      and (board[row - 1, startCol] != 0)):
+                    return startCol
+                elif ((board[row, startCol] == opp_move)
+                      and (board[row, startCol + 1] == 0)
+                      and (board[row, startCol + 2] == opp_move)
+                      and (board[row, startCol + 3] == opp_move)
+                      and (board[row - 1, startCol + 1] != 0)):
+                    return startCol + 1
+                elif ((board[row, startCol] == opp_move)
+                      and (board[row, startCol + 1] == opp_move)
+                      and (board[row, startCol + 2] == 0)
+                      and (board[row, startCol + 3] == opp_move)
+                      and (board[row - 1, startCol + 2] != 0)):
+                    return startCol + 2
+            else:
+                if ((board[row, startCol] == opp_move)
+                        and (board[row, startCol + 1] == opp_move)
+                        and (board[row, startCol + 2] == opp_move)
+                        and (board[row, startCol + 3] == 0)):
+                    return startCol + 3
+                elif ((board[row, startCol] == 0)
+                      and (board[row, startCol + 1] == opp_move)
+                      and (board[row, startCol + 2] == opp_move)
+                      and (board[row, startCol + 3] == opp_move)):
+                    return startCol
+                elif ((board[row, startCol] == opp_move)
+                      and (board[row, startCol + 1] == 0)
+                      and (board[row, startCol + 2] == opp_move)
+                      and (board[row, startCol + 3] == opp_move)):
+                    return startCol + 1
+                elif ((board[row, startCol] == opp_move)
+                      and (board[row, startCol + 1] == opp_move)
+                      and (board[row, startCol + 2] == 0)
+                      and (board[row, startCol + 3] == opp_move)):
+                    return startCol + 2
+
+    for col in range(0, 7):  # check columns
+        for startRow in range(0, 3):
+            if ((board[startRow, col] == opp_move)
+                    and (board[startRow + 1, col] == opp_move)
+                    and (board[startRow + 2, col] == opp_move)
+                    and (board[startRow + 3, col] == 0)):
+                return col
+
+    for row in range(0, 3):  # down diagonals
+        for col in range(0, 4):
+            if ((board[row][col] == opp_move)
+                    and (board[row + 1][col + 1] == opp_move)
+                    and (board[row + 2][col + 2] == opp_move)
+                    and (board[row + 3][col + 3] == 0)
+                    and (board[row + 2][col + 3] != 0)):
+                return col + 3
+            elif ((board[row][col] == opp_move)
+                  and (board[row + 1][col + 1] == opp_move)
+                  and (board[row + 2][col + 2] == 0)
+                  and (board[row + 3][col + 3] == opp_move)
+                  and (board[row + 1][col + 2] != 0)):
+                return col + 2
+            elif ((board[row][col] == opp_move)
+                  and (board[row + 1][col + 1] == 0)
+                  and (board[row + 2][col + 2] == opp_move)
+                  and (board[row + 3][col + 3] == opp_move)
+                  and (board[row][col + 1] != 0)):
+                return col + 1
+            elif ((board[row][col] == 0)
+                  and (board[row + 1][col + 1] == opp_move)
+                  and (board[row + 2][col + 2] == opp_move)
+                  and (board[row + 3][col + 3] == opp_move)) \
+                    and (row == 0 or board[row - 1][col] != 0):
+                return col
+
+    for row in range(3, 6):  # up diagonals
+        for col in range(0, 3):
+            if ((board[row][col] == opp_move or board[row][col] == 0)
+                    and (board[row - 1][col + 1] == opp_move or board[row - 1][col + 1] == 0)
+                    and (board[row - 2][col + 2] == opp_move or board[row - 2][col + 2] == 0)
+                    and (board[row - 3][col + 3] == opp_move or board[row - 3][col + 3] == 0)):
+                opp_win += 1
+    return -1
+
 
 def evaluation(board) -> int:
     """
@@ -153,7 +253,7 @@ def alpha_beta(board, depth, alpha, beta, maximizing) -> (int, int):
     if len(valid_moves) > 0:
         column_to_play = random.choice(valid_moves)
 
-    #if it's a terminal node
+    # if it's a terminal node
     if won == -1:
         return [column_to_play, -1000]
     elif won == +1:
@@ -164,7 +264,7 @@ def alpha_beta(board, depth, alpha, beta, maximizing) -> (int, int):
     if depth == 0 or len(valid_moves) == 0:
         return [column_to_play, evaluation(board)]
 
-    #if it's not a terminal node
+    # if it's not a terminal node
     if maximizing:
         bestHeuristic = -1000
         for column in valid_moves:
@@ -227,4 +327,10 @@ class Player:
             The column index in which to place your piece. The piece will drop
             to the lowest empty row in the column (like a pile).
         """
+        if board[ROWS - 1][3] == 0:  # always play middle for first move
+            return 3
+        canBlockOppMove = canBlockWinMove(board)
+        if canBlockOppMove >= 0:
+            return canBlockOppMove
+
         return alpha_beta(board, DEPTH, -1000, 1000, True)[0]
